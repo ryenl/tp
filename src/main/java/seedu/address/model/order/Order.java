@@ -41,6 +41,25 @@ public abstract class Order {
     }
 
     /**
+     * Constructs an {@code Order} with the specified customer, list of items, initial status, remark, and order date.
+     *
+     * @param person The customer associated with this order.
+     * @param items The list of products in this order.
+     * @param status The initial status of the order.
+     * @param remark The remark associated with this order.
+     * @param orderDate The date and time when the order was placed.
+     */
+    public Order(Person person, List<? extends Product> items, OrderStatus status, Remark remark, LocalDateTime orderDate) {
+        requireAllNonNull(person, items, status, remark, orderDate);
+        this.orderDate = orderDate;
+        this.items = items;
+        this.status = status;
+        this.person = new Person(person);
+        this.originalPerson = person;
+        this.remark = remark;
+    }
+
+    /**
      * Returns the customer associated with this order.
      *
      * @return The {@code Person} object representing the customer.
@@ -61,6 +80,9 @@ public abstract class Order {
         this.originalPerson = person;
     }
 
+    public LocalDateTime getLocalDateTime() {
+        return orderDate;
+    }
     /**
      * Returns the order date in a formatted string.
      *

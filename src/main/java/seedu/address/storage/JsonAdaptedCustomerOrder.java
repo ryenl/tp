@@ -1,5 +1,7 @@
 package seedu.address.storage;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,11 +20,13 @@ class JsonAdaptedCustomerOrder {
     public static final String MISSING_FIELD_MESSAGE_FORMAT = "CustomerOrder's %s field is missing!";
     public static final String INVALID_STATUS_MESSAGE = "Invalid order status: %s. Valid statuses are: %s";
     public static final String EMPTY_ORDER_MESSAGE = "CustomerOrder must contain at least one pastry item";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
     private final JsonAdaptedPerson person;
     private final List<JsonAdaptedPastry> pastrys;
     private final String status;
     private final String remark;
+    private final String orderDate;
 
     /**
      * Constructs a {@code JsonAdaptedCustomerOrder} with the given order details.
@@ -31,7 +35,8 @@ class JsonAdaptedCustomerOrder {
     public JsonAdaptedCustomerOrder(@JsonProperty("person") JsonAdaptedPerson person,
                                     @JsonProperty("pastrys") List<JsonAdaptedPastry> pastrys,
                                     @JsonProperty("status") String status,
-                                    @JsonProperty("remark") String remark) {
+                                    @JsonProperty("remark") String remark,
+                                    @JsonProperty("orderDate") String orderDate) {
         this.person = person;
         if (pastrys == null) {
             this.pastrys = List.of();
@@ -40,6 +45,7 @@ class JsonAdaptedCustomerOrder {
         }
         this.status = status;
         this.remark = remark;
+        this.orderDate = orderDate;
     }
 
     /**
@@ -53,6 +59,7 @@ class JsonAdaptedCustomerOrder {
                 .collect(Collectors.toList());
         status = source.getStatus().toString().toUpperCase();
         remark = source.getRemark().toString();
+        orderDate = source.getLocalDateTime().format(DATE_TIME_FORMATTER);
     }
 
     /**
@@ -116,6 +123,17 @@ class JsonAdaptedCustomerOrder {
             throw new IllegalValueException("Invalid remark: " + e.getMessage());
         }
 
-        return new CustomerOrder(modelPerson, modelPastrys, orderStatus, modelRemark);
+        if (orderDate == null) {
+            throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, "orderDateTime"));
+        }
+
+        final LocalDateTime modelOrderDateTime;
+        try {
+            modelOrderDateTime = LocalDateTime.parse(orderDate, DATE_TIME_FORMATTER);
+        } catch (Exception e) {
+            throw new IllegalValueException("Invalid order date time: " + e.getMessage());
+        }
+
+        return new CustomerOrder(modelPerson, modelPastrys, orderStatus, modelRemark, modelOrderDateTime);
     }
 }

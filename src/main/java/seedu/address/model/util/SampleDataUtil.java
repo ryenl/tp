@@ -1,5 +1,7 @@
 package seedu.address.model.util;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,6 +41,7 @@ public class SampleDataUtil {
     // Static collections for ingredients and pastries to avoid multiple initializations
     private static final Map<Integer, Ingredient> defaultIngredients = new HashMap<>();
     private static final List<Pastry> defaultPastries = new ArrayList<>();
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 
     private static Customer sampleCustomer() {
         Customer c = new Customer(new Name("Bernice Yu"), new Phone("99272758"), new Email("berniceyu@example.com"),
@@ -106,7 +109,8 @@ public class SampleDataUtil {
                 new ArrayList<>(List.of(chocolate, flour, sugar)));
         List<Product> pastryList = List.of(strawberryWaffle, chocolatedonut);
         CustomerOrderList customerOrderList = new CustomerOrderList();
-        customerOrderList.addOrder(new CustomerOrder(sampleCustomer(), pastryList, OrderStatus.PENDING, EMPTY_REMARK));
+        LocalDateTime orderDate = LocalDateTime.parse("05-11-2024 11:45:00", DATE_TIME_FORMATTER);
+        customerOrderList.addOrder(new CustomerOrder(sampleCustomer(), pastryList, OrderStatus.PENDING, EMPTY_REMARK, orderDate));
         return customerOrderList;
     }
 
@@ -115,7 +119,8 @@ public class SampleDataUtil {
         Ingredient sugar = new Ingredient(2, "Sugar", 0.80);
         List<Product> ingredientList = List.of(flour, sugar);
         SupplyOrderList supplyOrderList = new SupplyOrderList();
-        supplyOrderList.addOrder(new SupplyOrder(sampleSupplier(), ingredientList, OrderStatus.PENDING, EMPTY_REMARK));
+        LocalDateTime orderDate = LocalDateTime.parse("07-11-2024 13:56:00", DATE_TIME_FORMATTER);
+        supplyOrderList.addOrder(new SupplyOrder(sampleSupplier(), ingredientList, OrderStatus.PENDING, EMPTY_REMARK, orderDate));
         return supplyOrderList;
     }
 
